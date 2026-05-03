@@ -103,11 +103,13 @@
     .hero-viz {
       flex: 1;
       min-height: 420px;
-      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    #brain-canvas {
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
+    .brain-img {
+      width: min(740px, 88%);
+      height: auto;
       display: block;
     }
     .hero-badge {
@@ -374,7 +376,7 @@
   </div>
 
   <div class="hero-viz">
-    <canvas id="brain-canvas"></canvas>
+    <img src="brain.png" alt="Brain" class="brain-img" />
   </div>
 </section>
 
@@ -643,121 +645,4 @@
   }
 
 
-  (function () {
-    const canvas = document.getElementById('brain-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-    /* Anatomically-traced brain outline (frontal view)
-       Right hemisphere key points; left is the mirror.
-       Smooth quadratic-bezier spline = real brain silhouette. */
-    const R = [
-      [  0,-92],[22,-112],[50,-122],[80,-115],
-      [100,-100],[118,-78],[130,-50],[133,-18],
-      [128, 15],[118, 45],[104, 70],[ 82, 88],
-      [ 54,102],[ 24,108],[  0,108],
-    ];
-    const L = R.slice(0,-1).reverse().map(([x,y])=>[-x,y]);
-    const PTS = [...R, ...L, [0,-92]];
-
-    const CHARS = [
-      'if','fn','=','<','>','%','::','=>','&&','||',
-      '{}','[]','()','>>','db','rx','ai','px','id','ML',
-      'api','var','let','ctx','key','map','log','get','set',
-      'data','null','true','run','vec','emb','rag','llm',
-      '0','1','2','3','4','5','6','7','8','9',
-      '.','#','_','!','?','+','-','*','/',':',
-      'schema','agent','query','brain','embed','fetch',
-    ];
-
-    function makeMask(mW, mH) {
-      const off = document.createElement('canvas');
-      off.width = mW; off.height = mH;
-      const oc = off.getContext('2d');
-      oc.save();
-      oc.translate(mW / 2, mH / 2);
-      const sx = mW / 300, sy = mH / 268;
-      oc.scale(sx, sy);
-      oc.fillStyle = '#fff';
-      oc.beginPath();
-      oc.moveTo(PTS[0][0], PTS[0][1]);
-      for (let i = 1; i < PTS.length - 1; i++) {
-        const mx = (PTS[i][0] + PTS[i+1][0]) / 2;
-        const my = (PTS[i][1] + PTS[i+1][1]) / 2;
-        oc.quadraticCurveTo(PTS[i][0], PTS[i][1], mx, my);
-      }
-      oc.closePath();
-      oc.fill();
-      oc.globalCompositeOperation = 'destination-out';
-      oc.beginPath(); oc.ellipse(0, -75, 9, 22, 0, 0, Math.PI * 2); oc.fill();
-      oc.fillRect(-4, -52, 8, 160);
-      oc.globalCompositeOperation = 'source-over';
-      oc.restore();
-      return oc.getImageData(0, 0, mW, mH);
-    }
-
-    let chars = [];
-
-    function buildChars(W, H) {
-      const Cx = W / 2, Cy = H * 0.47;
-      const mW = 290, mH = 256;
-      const mask = makeMask(mW, mH);
-      const ox = Cx - mW / 2, oy = Cy - mH / 2;
-      chars = [];
-      let s = 42317;
-      const rnd = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
-      const TARGET = 520;
-      let tries = 0;
-      while (chars.length < TARGET && tries < TARGET * 20) {
-        tries++;
-        const gx = rnd() * mW, gy = rnd() * mH;
-        const ix = Math.floor(gx), iy = Math.floor(gy);
-        if (ix >= mW || iy >= mH) continue;
-        if (mask.data[(iy * mW + ix) * 4 + 3] < 128) continue;
-        const ndx = (gx - mW / 2) / (mW / 2);
-        const ndy = (gy - mH / 2) / (mH / 2);
-        const dist = Math.sqrt(ndx * ndx + ndy * ndy);
-        const base = Math.max(0.35, 0.95 - dist * 0.42);
-        chars.push({
-          x: ox + gx, y: oy + gy,
-          char: CHARS[Math.floor(rnd() * CHARS.length)],
-          fs: 9 + rnd() * 6.5,
-          rot: (rnd() - 0.5) * 0.38,
-          op: base * (0.55 + rnd() * 0.45),
-        });
-      }
-    }
-
-    function draw(W, H) {
-      ctx.clearRect(0, 0, W, H);
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      chars.forEach(c => {
-        ctx.save();
-        ctx.translate(c.x, c.y);
-        ctx.rotate(c.rot);
-        ctx.font = c.fs.toFixed(1) + "px 'SF Mono','Fira Code','Courier New',monospace";
-        ctx.fillStyle = 'rgba(249,115,22,' + c.op.toFixed(2) + ')';
-        ctx.fillText(c.char, 0, 0);
-        ctx.restore();
-      });
-    }
-
-    function init() {
-      const rc = canvas.parentElement.getBoundingClientRect();
-      const W = rc.width, H = rc.height;
-      canvas.width  = Math.round(W * dpr);
-      canvas.height = Math.round(H * dpr);
-      canvas.style.width  = W + 'px';
-      canvas.style.height = H + 'px';
-      ctx.resetTransform();
-      ctx.scale(dpr, dpr);
-      buildChars(W, H);
-      draw(W, H);
-    }
-
-    requestAnimationFrame(() => requestAnimationFrame(init));
-    window.addEventListener('resize', () => { ctx.resetTransform(); init(); });
-  })();
 </script>
