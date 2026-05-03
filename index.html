@@ -104,11 +104,29 @@
       flex: 1;
       min-height: 420px;
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    #brain-canvas {
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
+    /* Brain illustration: screen-blend turns black dots → orange, white → transparent */
+    .brain-wrap {
+      position: relative;
+      isolation: isolate;
+      width: min(760px, 88%);
+      max-height: 480px;
+    }
+    .brain-wrap img {
       display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+    .brain-tint {
+      position: absolute;
+      inset: 0;
+      background: #F97316;
+      mix-blend-mode: screen;
+      pointer-events: none;
     }
     .hero-badge {
       display: inline-flex; align-items: center; gap: 7px;
@@ -369,7 +387,10 @@
   </div>
 
   <div class="hero-viz">
-    <canvas id="brain-canvas"></canvas>
+    <div class="brain-wrap">
+      <img src="ascii-art.png" alt="Brain illustration" />
+      <div class="brain-tint"></div>
+    </div>
   </div>
 </section>
 
@@ -642,66 +663,4 @@
     btn.disabled = true; inp.disabled = true;
   }
 
-  (function () {
-    const canvas = document.getElementById('brain-canvas');
-    if (!canvas) return;
-    const ctx  = canvas.getContext('2d');
-    const dpr  = Math.min(window.devicePixelRatio || 1, 2);
-
-    const img = new Image();
-    img.src = 'ascii-art.png';
-
-    function init() {
-      const rc = canvas.parentElement.getBoundingClientRect();
-      const W = rc.width, H = rc.height;
-      canvas.width  = Math.round(W * dpr);
-      canvas.height = Math.round(H * dpr);
-      canvas.style.width  = W + 'px';
-      canvas.style.height = H + 'px';
-      ctx.resetTransform();
-      ctx.scale(dpr, dpr);
-      draw(W, H);
-    }
-
-    function draw(W, H) {
-      ctx.clearRect(0, 0, W, H);
-
-      /* Fit brain image centred in the canvas with padding */
-      const maxW  = Math.min(W * 0.88, 740);
-      const maxH  = Math.min(H * 0.88, 480);
-      const scale = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
-      const iW    = Math.round(img.naturalWidth  * scale);
-      const iH    = Math.round(img.naturalHeight * scale);
-      const iX    = (W - iW) / 2;
-      const iY    = (H - iH) / 2;
-
-      /* Draw to offscreen so we can read & tint pixels */
-      const off = document.createElement('canvas');
-      off.width = iW; off.height = iH;
-      const oc  = off.getContext('2d');
-      oc.drawImage(img, 0, 0, iW, iH);
-
-      const data = oc.getImageData(0, 0, iW, iH);
-      const px   = data.data;
-
-      /* Dark pixels → orange (#F97316); light pixels → transparent */
-      for (let i = 0; i < px.length; i += 4) {
-        const brightness = (px[i] * 0.299 + px[i+1] * 0.587 + px[i+2] * 0.114);
-        const darkness   = 255 - brightness;          // 0 = white, 255 = black
-        px[i]   = 249;                                // orange R
-        px[i+1] = 115;                                // orange G
-        px[i+2] = 22;                                 // orange B
-        px[i+3] = Math.min(255, Math.round(darkness * 1.15));  // alpha ∝ darkness
-      }
-
-      oc.putImageData(data, 0, 0);
-      ctx.drawImage(off, iX, iY, iW, iH);
-    }
-
-    img.onload = () => requestAnimationFrame(() => requestAnimationFrame(init));
-    window.addEventListener('resize', () => { ctx.resetTransform(); init(); });
-  })();
 </script>
-
-</body>
-</html>
