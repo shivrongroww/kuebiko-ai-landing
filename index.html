@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kuebiko AI — Company Brain for Agents</title>
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="apple-touch-icon" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange:       #F97316;
+      --orange-light: #FDBA74;
+      --orange-dark:  #C2410C;
+      --txt:          #111111;
+      --txt-2:        #6B7280;
+      --txt-3:        #9CA3AF;
+      --bg:           #FAFAF8;
+      --bg-card:      #FFFFFF;
+      --bg-muted:     #F5F5F3;
+      --border:       #E5E7EB;
+      --border-light: #F3F4F6;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--txt);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── NAV ─────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      height: 60px;
+      background: rgba(250,250,248,0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-light);
+    }
+    .nav-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 32px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 15px; font-weight: 700; letter-spacing: -0.3px;
+      text-decoration: none; color: var(--txt);
+    }
+    .logo-mark {
+      width: 30px; height: 30px;
+      border-radius: 7px;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .logo-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .nav-btn {
+      padding: 9px 18px;
+      background: var(--txt); color: #fff;
+      font-family: inherit; font-size: 13px; font-weight: 500;
+      border: none; border-radius: 8px; cursor: pointer;
+      text-decoration: none; transition: opacity 0.15s;
+    }
+    .nav-btn:hover { opacity: 0.75; }
+
+    /* ─── HERO ────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding-top: 60px;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 100% 60% at 50% 100%, rgba(249,115,22,0.2) 0%, transparent 55%),
+        radial-gradient(ellipse  70% 40% at 20% 100%, rgba(253,186,116,0.14) 0%, transparent 50%),
+        radial-gradient(ellipse  70% 40% at 80% 100%, rgba(249,115,22,0.1) 0%, transparent 50%);
+    }
+    .hero-text {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+      padding: 52px 32px 28px;
+      position: relative; z-index: 2;
+    }
+    .hero-viz {
+      flex: 1;
+      min-height: 420px;
+      position: relative;
+    }
+    #brain-canvas {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: block;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 14px 6px 10px;
+      font-size: 12px; font-weight: 500; color: var(--txt-2);
+      margin-bottom: 36px;
+    }
+    .badge-dot {
+      width: 7px; height: 7px;
+      background: var(--orange); border-radius: 50%; flex-shrink: 0;
+    }
+    h1.hero-headline {
+      font-size: clamp(44px, 7.5vw, 82px);
+      font-weight: 900; line-height: 1.03; letter-spacing: -3px;
+      max-width: 860px;
+    }
+    h1.hero-headline em { font-style: normal; color: var(--orange); }
+    .hero-sub {
+      font-size: 18px; color: var(--txt-2);
+      max-width: 490px; margin: 22px auto 0; line-height: 1.7;
+    }
+    .waitlist-form {
+      display: flex; gap: 8px;
+      margin-top: 40px; max-width: 420px; width: 100%;
+    }
+    .waitlist-form input {
+      flex: 1; padding: 14px 18px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      font-family: inherit; font-size: 14px;
+      background: rgba(255,255,255,0.9); color: var(--txt);
+      outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .waitlist-form input::placeholder { color: var(--txt-3); }
+    .waitlist-form input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(249,115,22,0.12);
+    }
+    .waitlist-form button {
+      padding: 14px 22px;
+      background: var(--orange); color: #fff;
+      border: none; border-radius: 10px;
+      font-family: inherit; font-size: 14px; font-weight: 600;
+      cursor: pointer; white-space: nowrap; transition: background 0.15s;
+    }
+    .waitlist-form button:hover { background: var(--orange-dark); }
+    .waitlist-form button:disabled { background: #16a34a; cursor: default; }
+    .hero-note {
+      font-size: 12px; color: var(--txt-3); margin-top: 14px;
+    }
+
+    /* ─── SECTION LABEL BAR ───────────────────── */
+    .label-bar {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 11px 32px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .label-txt {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--txt-3);
+    }
+
+    /* ─── PROBLEM ─────────────────────────────── */
+    .problem-wrap {
+      max-width: 1160px; margin: 0 auto; padding: 96px 32px;
+    }
+    .problem-wrap h2 {
+      font-size: clamp(34px, 5vw, 58px);
+      font-weight: 800; letter-spacing: -2px; line-height: 1.08;
+      max-width: 640px; margin-bottom: 18px;
+    }
+    .problem-wrap .lead {
+      font-size: 17px; color: var(--txt-2);
+      max-width: 520px; line-height: 1.72; margin-bottom: 64px;
+    }
+    .problem-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--border); border-radius: 16px;
+      overflow: hidden; gap: 1px; background: var(--border);
+    }
+    .p-card { background: var(--bg-card); padding: 40px 36px; }
+    .p-icon {
+      width: 44px; height: 44px;
+      background: var(--bg-muted); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .p-icon svg { display: block; }
+    .p-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+    .p-card p { font-size: 14px; color: var(--txt-2); line-height: 1.65; }
+    .p-card .quote {
+      margin-top: 20px; padding: 12px 16px;
+      background: var(--bg-muted);
+      border-left: 3px solid var(--orange-light);
+      border-radius: 0 8px 8px 0;
+      font-size: 13px; color: var(--txt-2); font-style: italic;
+    }
+
+    /* ─── USE CASES ───────────────────────────── */
+    .uc-wrap { max-width: 1160px; margin: 0 auto; padding: 96px 32px; }
+    .eyebrow {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 14px;
+    }
+    .uc-wrap h2 {
+      font-size: clamp(32px, 4.5vw, 52px);
+      font-weight: 800; letter-spacing: -1.5px; line-height: 1.1;
+      max-width: 560px; margin-bottom: 14px;
+    }
+    .uc-wrap .lead {
+      font-size: 16px; color: var(--txt-2);
+      max-width: 440px; line-height: 1.7; margin-bottom: 60px;
+    }
+    .uc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .uc-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 40px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .uc-card:hover {
+      border-color: var(--orange-light);
+      box-shadow: 0 4px 28px rgba(249,115,22,0.09);
+    }
+    .uc-team {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--orange); margin-bottom: 12px;
+    }
+    .uc-card h3 {
+      font-size: 19px; font-weight: 700; letter-spacing: -0.4px; margin-bottom: 12px;
+    }
+    .uc-card p { font-size: 14px; color: var(--txt-2); line-height: 1.7; margin-bottom: 24px; }
+    .pills { display: flex; flex-wrap: wrap; gap: 7px; }
+    .pill {
+      background: var(--bg-muted); border: 1px solid var(--border);
+      border-radius: 100px; padding: 4px 12px;
+      font-size: 12px; font-weight: 500; color: var(--txt-2);
+    }
+
+    /* ─── INTEGRATIONS ────────────────────────── */
+    .int-section {
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 96px 32px; text-align: center;
+    }
+    .int-inner { max-width: 860px; margin: 0 auto; }
+    .int-section h2 {
+      font-size: clamp(28px, 4vw, 46px);
+      font-weight: 800; letter-spacing: -1.2px; margin-bottom: 12px;
+    }
+    .int-section .lead {
+      font-size: 16px; color: var(--txt-2);
+      max-width: 380px; margin: 0 auto 56px; line-height: 1.65;
+    }
+    .int-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+    }
+    .int-item {
+      padding: 32px 16px; display: flex; flex-direction: column;
+      align-items: center; gap: 11px;
+      border-right: 1px solid var(--border); transition: background 0.15s;
+    }
+    .int-item:last-child { border-right: none; }
+    .int-item:hover { background: var(--bg); }
+    .int-icon {
+      width: 48px; height: 48px; background: var(--bg-muted);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .int-icon img { width: 32px; height: 32px; object-fit: contain; display: block; }
+    .int-name { font-size: 12px; font-weight: 500; color: var(--txt-2); }
+    .int-note { margin-top: 32px; font-size: 13px; color: var(--txt-3); }
+    .int-note span { color: var(--orange); font-weight: 500; }
+
+    /* ─── FINAL CTA ───────────────────────────── */
+    .cta-section { padding: 120px 32px; text-align: center; }
+    .cta-inner { max-width: 680px; margin: 0 auto; }
+    .cta-section h2 {
+      font-size: clamp(38px, 5.5vw, 64px);
+      font-weight: 900; letter-spacing: -2.5px; line-height: 1.04; margin-bottom: 20px;
+    }
+    .cta-section h2 em { font-style: normal; color: var(--orange); }
+    .cta-section .lead { font-size: 17px; color: var(--txt-2); margin-bottom: 40px; line-height: 1.65; }
+
+    /* ─── FOOTER ──────────────────────────────── */
+    footer { border-top: 1px solid var(--border); padding: 40px 32px; }
+    .footer-inner {
+      max-width: 1160px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-left { display: flex; align-items: center; gap: 28px; }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-size: 13px; color: var(--txt-3); text-decoration: none; transition: color 0.15s; }
+    .footer-links a:hover { color: var(--txt); }
+    .footer-copy { font-size: 13px; color: var(--txt-3); }
+
+    /* ─── RESPONSIVE ──────────────────────────── */
+    @media (max-width: 900px) {
+      .problem-grid { grid-template-columns: 1fr; }
+      .uc-grid { grid-template-columns: 1fr; }
+      .int-grid { grid-template-columns: repeat(3, 1fr); }
+      .int-item:nth-child(3) { border-right: none; }
+      .int-item:nth-child(4), .int-item:nth-child(5) { border-top: 1px solid var(--border); }
+    }
+    @media (max-width: 600px) {
+      .nav-inner { padding: 0 20px; }
+      h1.hero-headline { letter-spacing: -2px; }
+      .waitlist-form { flex-direction: column; }
+      .problem-wrap, .uc-wrap { padding: 72px 20px; }
+      .int-grid { grid-template-columns: repeat(2, 1fr); }
+      .int-item:nth-child(2n) { border-right: none; }
+      .footer-inner { flex-direction: column; gap: 20px; text-align: center; }
+      .footer-left { flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ─────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-mark">
+        <img src="logo.png" alt="Kuebiko" />
+      </div>
+      Kuebiko AI
+    </a>
+    <a href="#waitlist" class="nav-btn">Join Waitlist →</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ──────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+
+  <div class="hero-text">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      Building now · Early access launching May 2025
+    </div>
+    <h1 class="hero-headline">
+      Give every agent<br>your company's <em>brain.</em>
+    </h1>
+    <p class="hero-sub">
+      Every team uses AI daily. None of those agents know your company.
+      Kuebiko is the shared knowledge layer that changes that — for everyone.
+    </p>
+    <form class="waitlist-form" onsubmit="handleSubmit(event)">
+      <input type="email" placeholder="you@company.com" required />
+      <button type="submit">Get Early Access</button>
+    </form>
+    <p class="hero-note">No credit card. No product yet. Be first to know when we ship.</p>
+  </div>
+
+  <div class="hero-viz">
+    <canvas id="brain-canvas"></canvas>
+  </div>
+</section>
+
+<!-- ─── PROBLEM ───────────────────────────────────── -->
+<div class="label-bar">
+  <span class="label-txt">The Problem</span>
+  <span class="label-txt">[1 / 3]</span>
+</div>
+
+<section>
+  <div class="problem-wrap">
+    <h2>Every agent starts<br>from zero.</h2>
+    <p class="lead">
+      Your team is using AI across every tool. But each agent is a blank slate.
+      It doesn't know your architecture, your brand voice, or how you do anything.
+      That's a company-wide tax paid thousands of times a day.
+    </p>
+
+    <div class="problem-grid">
+
+      <!-- Engineering icon: CPU chip made of pixel dots -->
+      <div class="p-card">
+        <div class="p-icon">
+          <svg viewBox="0 0 36 36" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <!-- top pins -->
+            <rect x="11" y="1"  width="4" height="4" rx="1" fill="#F97316" opacity="0.45"/>
+            <rect x="21" y="1"  width="4" height="4" rx="1" fill="#F97316" opacity="0.45"/>
+            <rect x="11" y="6"  width="4" height="4" rx="1" fill="#F97316" opacity="0.55"/>
+            <rect x="21" y="6"  width="4" height="4" rx="1" fill="#F97316" opacity="0.55"/>
+            <!-- chip top edge -->
+            <rect x="6"  y="11" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="11" y="11" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="16" y="11" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="21" y="11" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="26" y="11" width="4" height="4" rx="1" fill="#F97316"/>
+            <!-- chip body row -->
+            <rect x="6"  y="16" width="4" height="4" rx="1" fill="#F97316" opacity="0.65"/>
+            <rect x="16" y="16" width="4" height="4" rx="1" fill="#F97316" opacity="0.9"/>
+            <rect x="26" y="16" width="4" height="4" rx="1" fill="#F97316" opacity="0.65"/>
+            <!-- chip bottom edge -->
+            <rect x="6"  y="21" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="11" y="21" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="16" y="21" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="21" y="21" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="26" y="21" width="4" height="4" rx="1" fill="#F97316"/>
+            <!-- bottom pins -->
+            <rect x="11" y="26" width="4" height="4" rx="1" fill="#F97316" opacity="0.55"/>
+            <rect x="21" y="26" width="4" height="4" rx="1" fill="#F97316" opacity="0.55"/>
+            <rect x="11" y="31" width="4" height="4" rx="1" fill="#F97316" opacity="0.45"/>
+            <rect x="21" y="31" width="4" height="4" rx="1" fill="#F97316" opacity="0.45"/>
+          </svg>
+        </div>
+        <h3>Engineering</h3>
+        <p>Cursor doesn't know your architecture decisions, your preferred patterns, or why you made the choices you did. Every session starts with a blank context window.</p>
+        <div class="quote">"Why did we choose Postgres over Mongo?"<br>Your agent has no idea.</div>
+      </div>
+
+      <!-- Design icon: diamond / gem made of pixel dots -->
+      <div class="p-card">
+        <div class="p-icon">
+          <svg viewBox="0 0 36 36" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <!-- diamond outline, fading inward -->
+            <rect x="16" y="1"  width="4" height="4" rx="1" fill="#F97316" opacity="1"/>
+            <rect x="11" y="6"  width="4" height="4" rx="1" fill="#F97316" opacity="0.85"/>
+            <rect x="21" y="6"  width="4" height="4" rx="1" fill="#F97316" opacity="0.85"/>
+            <rect x="6"  y="11" width="4" height="4" rx="1" fill="#F97316" opacity="0.7"/>
+            <rect x="26" y="11" width="4" height="4" rx="1" fill="#F97316" opacity="0.7"/>
+            <rect x="1"  y="16" width="4" height="4" rx="1" fill="#F97316" opacity="0.55"/>
+            <rect x="31" y="16" width="4" height="4" rx="1" fill="#F97316" opacity="0.55"/>
+            <rect x="6"  y="21" width="4" height="4" rx="1" fill="#F97316" opacity="0.7"/>
+            <rect x="26" y="21" width="4" height="4" rx="1" fill="#F97316" opacity="0.7"/>
+            <rect x="11" y="26" width="4" height="4" rx="1" fill="#F97316" opacity="0.85"/>
+            <rect x="21" y="26" width="4" height="4" rx="1" fill="#F97316" opacity="0.85"/>
+            <rect x="16" y="31" width="4" height="4" rx="1" fill="#F97316" opacity="1"/>
+            <!-- inner cross -->
+            <rect x="16" y="11" width="4" height="4" rx="1" fill="#F97316" opacity="0.4"/>
+            <rect x="11" y="16" width="4" height="4" rx="1" fill="#F97316" opacity="0.3"/>
+            <rect x="16" y="16" width="4" height="4" rx="1" fill="#F97316" opacity="0.5"/>
+            <rect x="21" y="16" width="4" height="4" rx="1" fill="#F97316" opacity="0.3"/>
+            <rect x="16" y="21" width="4" height="4" rx="1" fill="#F97316" opacity="0.4"/>
+          </svg>
+        </div>
+        <h3>Design</h3>
+        <p>Your design AI doesn't know your component system, your spacing decisions, or your rejected directions. It guesses where it should just know.</p>
+        <div class="quote">"Use our design token for surface elevation."<br>Your agent has never heard of it.</div>
+      </div>
+
+      <!-- Marketing icon: megaphone / broadcast made of pixel dots -->
+      <div class="p-card">
+        <div class="p-icon">
+          <svg viewBox="0 0 36 36" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <!-- horn bell: top flare -->
+            <rect x="26" y="1"  width="4" height="4" rx="1" fill="#F97316" opacity="0.5"/>
+            <rect x="31" y="1"  width="4" height="4" rx="1" fill="#F97316" opacity="0.4"/>
+            <rect x="21" y="6"  width="4" height="4" rx="1" fill="#F97316" opacity="0.65"/>
+            <rect x="26" y="6"  width="4" height="4" rx="1" fill="#F97316" opacity="0.55"/>
+            <!-- cone body -->
+            <rect x="6"  y="11" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="11" y="11" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="16" y="11" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="21" y="11" width="4" height="4" rx="1" fill="#F97316"/>
+            <!-- handle/mouth -->
+            <rect x="1"  y="16" width="4" height="4" rx="1" fill="#F97316" opacity="0.75"/>
+            <rect x="6"  y="16" width="4" height="4" rx="1" fill="#F97316"/>
+            <!-- cone body bottom -->
+            <rect x="6"  y="21" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="11" y="21" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="16" y="21" width="4" height="4" rx="1" fill="#F97316"/>
+            <rect x="21" y="21" width="4" height="4" rx="1" fill="#F97316"/>
+            <!-- horn bell: bottom flare -->
+            <rect x="21" y="26" width="4" height="4" rx="1" fill="#F97316" opacity="0.65"/>
+            <rect x="26" y="26" width="4" height="4" rx="1" fill="#F97316" opacity="0.55"/>
+            <rect x="26" y="31" width="4" height="4" rx="1" fill="#F97316" opacity="0.5"/>
+            <rect x="31" y="31" width="4" height="4" rx="1" fill="#F97316" opacity="0.4"/>
+            <!-- sound dot -->
+            <rect x="1"  y="11" width="4" height="4" rx="1" fill="#F97316" opacity="0.3"/>
+            <rect x="1"  y="21" width="4" height="4" rx="1" fill="#F97316" opacity="0.3"/>
+          </svg>
+        </div>
+        <h3>Marketing</h3>
+        <p>The marketer's AI doesn't know your brand voice, your audience segments, or your past campaigns. It writes generic copy when it should write yours.</p>
+        <div class="quote">"We never use the word 'seamless'."<br>Your agent uses it in every draft.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── USE CASES ─────────────────────────────────── -->
+<div class="label-bar">
+  <span class="label-txt">Use Cases</span>
+  <span class="label-txt">[2 / 3]</span>
+</div>
+
+<section>
+  <div class="uc-wrap">
+    <p class="eyebrow">Built for every team</p>
+    <h2>One knowledge base.<br>Every agent benefits.</h2>
+    <p class="lead">Teams document what they know. Agents pull what they need. The company gets smarter every day — automatically.</p>
+    <div class="uc-grid">
+      <div class="uc-card">
+        <div class="uc-team">Engineering</div>
+        <h3>Context that survives every sprint</h3>
+        <p>Architecture decisions, coding conventions, incident post-mortems, ADRs — all queryable by your coding agent. Cursor finally knows why you chose that pattern.</p>
+        <div class="pills">
+          <span class="pill">Architecture decisions</span>
+          <span class="pill">Coding conventions</span>
+          <span class="pill">Incident history</span>
+          <span class="pill">ADRs</span>
+        </div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-team">Design</div>
+        <h3>Agents that know your system</h3>
+        <p>Component patterns, spacing decisions, brand rationale, rejected directions — your design agent works inside your system, not around it.</p>
+        <div class="pills">
+          <span class="pill">Component patterns</span>
+          <span class="pill">Brand guidelines</span>
+          <span class="pill">Design tokens</span>
+          <span class="pill">Rejected directions</span>
+        </div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-team">Marketing</div>
+        <h3>Brand voice that actually sticks</h3>
+        <p>Tone, positioning, audience segments, campaign history — your AI writes in your voice because it knows your voice. Not a generic approximation of it.</p>
+        <div class="pills">
+          <span class="pill">Brand voice</span>
+          <span class="pill">Campaign history</span>
+          <span class="pill">Audience segments</span>
+          <span class="pill">Positioning</span>
+        </div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-team">Operations</div>
+        <h3>Runbooks agents can actually run</h3>
+        <p>Vendor relationships, process documentation, compliance notes — ops knowledge stops living in someone's head and starts living somewhere agents can reach.</p>
+        <div class="pills">
+          <span class="pill">Runbooks</span>
+          <span class="pill">Vendor context</span>
+          <span class="pill">Process docs</span>
+          <span class="pill">Compliance</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── INTEGRATIONS ──────────────────────────────── -->
+<div class="label-bar">
+  <span class="label-txt">Integrations</span>
+  <span class="label-txt">[3 / 3]</span>
+</div>
+
+<section class="int-section">
+  <div class="int-inner">
+    <h2>Plugs into the tools<br>your teams already use.</h2>
+    <p class="lead">Connect via MCP server or REST API. Works with the agents and tools across every team today.</p>
+    <div class="int-grid">
+      <div class="int-item">
+        <div class="int-icon"><img src="https://cdn.simpleicons.org/cursor/111827" alt="Cursor" width="30" height="30" /></div>
+        <span class="int-name">Cursor</span>
+      </div>
+      <div class="int-item">
+        <div class="int-icon"><img src="https://cdn.simpleicons.org/anthropic/C96442" alt="Claude" width="30" height="30" /></div>
+        <span class="int-name">Claude</span>
+      </div>
+      <div class="int-item">
+        <div class="int-icon"><img src="https://cdn.simpleicons.org/notion/111827" alt="Notion" width="30" height="30" /></div>
+        <span class="int-name">Notion</span>
+      </div>
+      <div class="int-item">
+        <div class="int-icon">
+          <svg viewBox="0 0 24 24" width="30" height="30" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313z" fill="#E01E5A"/>
+            <path d="M8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zm0 1.271a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312z" fill="#36C5F0"/>
+            <path d="M18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zm-1.27 0a2.528 2.528 0 0 1-2.522 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.522 2.522v6.312z" fill="#2EB67D"/>
+            <path d="M15.165 18.956a2.528 2.528 0 0 1 2.522 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zm0-1.27a2.527 2.527 0 0 1-2.52-2.521 2.527 2.527 0 0 1 2.52-2.521h6.313A2.528 2.528 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.52h-6.313z" fill="#ECB22E"/>
+          </svg>
+        </div>
+        <span class="int-name">Slack</span>
+      </div>
+      <div class="int-item">
+        <div class="int-icon"><img src="https://cdn.simpleicons.org/mintlify/06B6D4" alt="Mintlify" width="30" height="30" /></div>
+        <span class="int-name">Mintlify</span>
+      </div>
+    </div>
+    <p class="int-note">More integrations on the roadmap. <span>Tell us what you need →</span></p>
+  </div>
+</section>
+
+<!-- ─── FINAL CTA ─────────────────────────────────── -->
+<section class="cta-section" id="waitlist">
+  <div class="cta-inner">
+    <h2>Your agents need your<br>company's <em>brain.</em></h2>
+    <p class="lead">Join the waitlist. Be first to give your agents the context they've been missing.</p>
+    <form class="waitlist-form" style="margin:0 auto;" onsubmit="handleSubmit(event)">
+      <input type="email" placeholder="you@company.com" required />
+      <button type="submit">Join Waitlist →</button>
+    </form>
+  </div>
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <a href="#" class="logo" style="font-size:14px;">
+        <div class="logo-mark" style="width:22px;height:22px;">
+          <img src="logo.png" alt="Kuebiko" />
+        </div>
+        Kuebiko AI
+      </a>
+      <div class="footer-links">
+        <a href="mailto:hello@kuebiko.ai">Contact</a>
+        <a href="#">Privacy</a>
+        <a href="#">Twitter</a>
+      </div>
+    </div>
+    <p class="footer-copy">© 2025 Kuebiko AI · Bangalore &amp; San Francisco</p>
+  </div>
+</footer>
+
+<script>
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.currentTarget.querySelector('button');
+    const inp = e.currentTarget.querySelector('input');
+    btn.textContent = "✓ You're on the list";
+    btn.disabled = true; inp.disabled = true;
+  }
+
+  (function () {
+    const canvas = document.getElementById('brain-canvas');
+    if (!canvas) return;
+    const ctx  = canvas.getContext('2d');
+    const dpr  = Math.min(window.devicePixelRatio || 1, 2);
+
+    const img = new Image();
+    img.src = 'ascii-art.png';
+
+    function init() {
+      const rc = canvas.parentElement.getBoundingClientRect();
+      const W = rc.width, H = rc.height;
+      canvas.width  = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      canvas.style.width  = W + 'px';
+      canvas.style.height = H + 'px';
+      ctx.resetTransform();
+      ctx.scale(dpr, dpr);
+      draw(W, H);
+    }
+
+    function draw(W, H) {
+      ctx.clearRect(0, 0, W, H);
+
+      /* Fit brain image centred in the canvas with padding */
+      const maxW  = Math.min(W * 0.88, 740);
+      const maxH  = Math.min(H * 0.88, 480);
+      const scale = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
+      const iW    = Math.round(img.naturalWidth  * scale);
+      const iH    = Math.round(img.naturalHeight * scale);
+      const iX    = (W - iW) / 2;
+      const iY    = (H - iH) / 2;
+
+      /* Draw to offscreen so we can read & tint pixels */
+      const off = document.createElement('canvas');
+      off.width = iW; off.height = iH;
+      const oc  = off.getContext('2d');
+      oc.drawImage(img, 0, 0, iW, iH);
+
+      const data = oc.getImageData(0, 0, iW, iH);
+      const px   = data.data;
+
+      /* Dark pixels → orange (#F97316); light pixels → transparent */
+      for (let i = 0; i < px.length; i += 4) {
+        const brightness = (px[i] * 0.299 + px[i+1] * 0.587 + px[i+2] * 0.114);
+        const darkness   = 255 - brightness;          // 0 = white, 255 = black
+        px[i]   = 249;                                // orange R
+        px[i+1] = 115;                                // orange G
+        px[i+2] = 22;                                 // orange B
+        px[i+3] = Math.min(255, Math.round(darkness * 1.15));  // alpha ∝ darkness
+      }
+
+      oc.putImageData(data, 0, 0);
+      ctx.drawImage(off, iX, iY, iW, iH);
+    }
+
+    img.onload = () => requestAnimationFrame(() => requestAnimationFrame(init));
+    window.addEventListener('resize', () => { ctx.resetTransform(); init(); });
+  })();
+</script>
+
+</body>
+</html>

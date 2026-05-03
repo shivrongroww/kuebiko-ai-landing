@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Font Preview — Kuebiko AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;700;800;900&family=Syne:wght@400;700;800;900&family=Instrument+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+  <!-- Satoshi via Fontshare -->
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #F97316;
+      --border: #E5E7EB;
+      --txt-2: #6B7280;
+      --bg: #FAFAF8;
+    }
+    body {
+      background: var(--bg);
+      padding: 48px 40px;
+      color: #111;
+      -webkit-font-smoothing: antialiased;
+    }
+    .page-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--txt-2);
+      margin-bottom: 48px;
+    }
+    .font-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px;
+      margin-bottom: 20px;
+      background: white;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    .font-meta { padding-top: 6px; }
+    .font-number {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #9CA3AF;
+      margin-bottom: 8px;
+    }
+    .font-name {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .font-source {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: #9CA3AF;
+      margin-bottom: 14px;
+    }
+    .font-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--txt-2);
+      line-height: 1.65;
+    }
+    .font-tag {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 3px 10px;
+      background: #FEF3C7;
+      border: 1px solid #FDE68A;
+      border-radius: 100px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: #92400E;
+    }
+    .font-preview { border-left: 1px solid var(--border); padding-left: 48px; }
+    .preview-headline {
+      line-height: 1.04;
+      letter-spacing: -2px;
+      font-size: 52px;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+    .preview-headline em { font-style: normal; color: var(--orange); }
+    .preview-sub {
+      font-size: 17px;
+      color: var(--txt-2);
+      line-height: 1.65;
+      font-weight: 400;
+      max-width: 460px;
+      margin-bottom: 22px;
+    }
+    .preview-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 5px 13px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--txt-2);
+    }
+    .badge-dot { width: 6px; height: 6px; background: var(--orange); border-radius: 50%; }
+
+    /* Font families */
+    .f-dmsans        { font-family: 'DM Sans', sans-serif; }
+    .f-satoshi       { font-family: 'Satoshi', sans-serif; }
+    .f-jakarta       { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .f-syne          { font-family: 'Syne', sans-serif; }
+    .f-outfit        { font-family: 'Outfit', sans-serif; }
+  </style>
+</head>
+<body>
+
+<p class="page-title">Font Preview — Kuebiko AI Landing Page</p>
+
+<!-- 1. DM Sans -->
+<div class="font-card">
+  <div class="font-meta">
+    <p class="font-number">01</p>
+    <p class="font-name">DM Sans</p>
+    <p class="font-source">Google Fonts · Free</p>
+    <p class="font-desc">Approachable and modern. Slightly rounded terminals soften the technical feel. Used by Linear's blog, some Stripe docs. Works best if you want warm + trustworthy over sharp + premium.</p>
+    <span class="font-tag">Most approachable</span>
+  </div>
+  <div class="font-preview f-dmsans">
+    <p class="preview-badge f-dmsans"><span class="badge-dot"></span> Building now · Early access May 2025</p>
+    <div style="height:20px"></div>
+    <h2 class="preview-headline f-dmsans">Give every agent<br>your company's <em>brain.</em></h2>
+    <p class="preview-sub f-dmsans">Every team uses AI daily. None of those agents know your company. Kuebiko is the shared knowledge layer that changes that.</p>
+  </div>
+</div>
+
+<!-- 2. Satoshi -->
+<div class="font-card">
+  <div class="font-meta">
+    <p class="font-number">02</p>
+    <p class="font-name">Satoshi</p>
+    <p class="font-source">Fontshare · Free</p>
+    <p class="font-desc">The go-to font for AI and dev-tool startups right now. Geometric, confident, very clean at large sizes. Used by Resend, Raycast marketing, many YC companies. Feels current without being trendy.</p>
+    <span class="font-tag">Most used in AI startups</span>
+  </div>
+  <div class="font-preview f-satoshi">
+    <p class="preview-badge f-satoshi"><span class="badge-dot"></span> Building now · Early access May 2025</p>
+    <div style="height:20px"></div>
+    <h2 class="preview-headline f-satoshi">Give every agent<br>your company's <em>brain.</em></h2>
+    <p class="preview-sub f-satoshi">Every team uses AI daily. None of those agents know your company. Kuebiko is the shared knowledge layer that changes that.</p>
+  </div>
+</div>
+
+<!-- 3. Plus Jakarta Sans -->
+<div class="font-card">
+  <div class="font-meta">
+    <p class="font-number">03</p>
+    <p class="font-name">Plus Jakarta Sans</p>
+    <p class="font-source">Google Fonts · Free</p>
+    <p class="font-desc">More distinctive than Inter, slightly editorial feel. Has personality without being loud. Works exceptionally well at display sizes. Good if you want to stand out from the typical dev-tool aesthetic.</p>
+    <span class="font-tag">Most distinctive</span>
+  </div>
+  <div class="font-preview f-jakarta">
+    <p class="preview-badge f-jakarta"><span class="badge-dot"></span> Building now · Early access May 2025</p>
+    <div style="height:20px"></div>
+    <h2 class="preview-headline f-jakarta">Give every agent<br>your company's <em>brain.</em></h2>
+    <p class="preview-sub f-jakarta">Every team uses AI daily. None of those agents know your company. Kuebiko is the shared knowledge layer that changes that.</p>
+  </div>
+</div>
+
+<!-- 4. Syne -->
+<div class="font-card">
+  <div class="font-meta">
+    <p class="font-number">04</p>
+    <p class="font-name">Syne</p>
+    <p class="font-source">Google Fonts · Free</p>
+    <p class="font-desc">Bold, architectural, asymmetric. The most opinionated choice here. Makes headlines feel like a statement. Risky if you want conventional trust — powerful if you want to feel like a brand, not a SaaS.</p>
+    <span class="font-tag">Most opinionated</span>
+  </div>
+  <div class="font-preview f-syne">
+    <p class="preview-badge f-syne"><span class="badge-dot"></span> Building now · Early access May 2025</p>
+    <div style="height:20px"></div>
+    <h2 class="preview-headline f-syne">Give every agent<br>your company's <em>brain.</em></h2>
+    <p class="preview-sub f-syne">Every team uses AI daily. None of those agents know your company. Kuebiko is the shared knowledge layer that changes that.</p>
+  </div>
+</div>
+
+<!-- 5. Outfit -->
+<div class="font-card">
+  <div class="font-meta">
+    <p class="font-number">05</p>
+    <p class="font-name">Outfit</p>
+    <p class="font-source">Google Fonts · Free</p>
+    <p class="font-desc">Clean geometric grotesque, very readable. Slightly less trendy than Satoshi, which means it ages better. Feels polished and neutral — never fights the content. A safe bet for a founder-first product.</p>
+    <span class="font-tag">Most timeless</span>
+  </div>
+  <div class="font-preview f-outfit">
+    <p class="preview-badge f-outfit"><span class="badge-dot"></span> Building now · Early access May 2025</p>
+    <div style="height:20px"></div>
+    <h2 class="preview-headline f-outfit">Give every agent<br>your company's <em>brain.</em></h2>
+    <p class="preview-sub f-outfit">Every team uses AI daily. None of those agents know your company. Kuebiko is the shared knowledge layer that changes that.</p>
+  </div>
+</div>
+
+</body>
+</html>
